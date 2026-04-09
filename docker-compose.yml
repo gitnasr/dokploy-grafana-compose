@@ -15,6 +15,11 @@ services:
     depends_on:
       - tempo
       - loki
+    ports:
+      - "4317"
+      - "4318"
+      - "12345"
+      - "12347"
     networks:
       - dokploy-network
 
@@ -24,6 +29,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./monitoring/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo-data:/var/tempo
     command:
       - -config.file=/etc/tempo/tempo.yaml
     networks:
@@ -35,6 +41,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./monitoring/loki.yaml:/etc/loki/loki.yaml:ro
+      - loki-data:/loki
     command:
       - -config.file=/etc/loki/loki.yaml
     networks:
@@ -47,6 +54,7 @@ services:
     volumes:
       - ./monitoring/provisioning:/etc/grafana/provisioning:ro
       - ./monitoring/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
     environment:
       - GF_FEATURE_TOGGLES_ENABLE=flameGraph traceqlSearch traceQLStreaming correlations metricsSummary traceqlEditor traceToMetrics traceToProfiles
       - GF_AUTH_ANONYMOUS_ENABLED=false
@@ -61,8 +69,15 @@ services:
     depends_on:
       - tempo
       - loki
+    ports:
+      - "3000"
     networks:
       - dokploy-network
+
+volumes:
+  tempo-data:
+  loki-data:
+  grafana-data:
 
 networks:
   dokploy-network:

@@ -45,7 +45,7 @@ datasources:
   - name: Prometheus
     type: prometheus
     access: proxy
-    url: http://tempo:9095
+    url: http://tempo:3200/api/prom
     uid: prometheus
     isDefault: true
     editable: true
