@@ -1,130 +1,142 @@
-import * as api from "@opentelemetry/api";
-import * as logs from "@opentelemetry/api-logs";
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+// Send one OTLP trace, metric, and log to Alloy via HTTPS + basic auth.
+// Run with: cp .env.example .env && pnpm install && pnpm start
+
+import "dotenv/config";
+
+import {
+  DiagConsoleLogger,
+  DiagLogLevel,
+  diag,
+  metrics,
+  trace,
+} from "@opentelemetry/api";
+
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+
+import { logs } from "@opentelemetry/api-logs";
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
+import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-http";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { BatchLogRecordProcessor } from "@opentelemetry/sdk-logs";
-import { NodeSDK } from "@opentelemetry/sdk-node";
-import { config } from "./config";
+import { Resource } from "@opentelemetry/resources";
+import {
+  LoggerProvider,
+  SimpleLogRecordProcessor,
+} from "@opentelemetry/sdk-logs";
+import {
+  MeterProvider,
+  PeriodicExportingMetricReader,
+} from "@opentelemetry/sdk-metrics";
+import { SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 
-// Configure the OTLP exporter to send traces to Tempo
-const traceExporter = new OTLPTraceExporter({
-  url: config.tempoUrl, // Tempo OTLP HTTP endpoint
-  headers: {},
-});
+const serviceName = "node-otel-test";
 
-// Configure the OTLP exporter to send logs to Loki
-const logExporter = new OTLPLogExporter({
-  url: config.lokiUrl, // Loki OTLP HTTP endpoint
-  headers: {},
-});
+const {
+  ALLOY_ENDPOINT: alloyEndpoint,
+  ALLOY_USER: alloyUser,
+  ALLOY_PASSWORD: alloyPassword,
+  METRIC_VALUE: metricValue = (Math.random() * 100).toFixed(2),
+  LOG_MESSAGE: logMessage = `random log ${Math.random().toString(36).slice(2, 10)} @ ${new Date().toISOString()}`,
+} = process.env;
 
-// Initialize the OpenTelemetry SDK with both trace and log exporters
-const sdk = new NodeSDK({
-  traceExporter,
-  logRecordProcessor: new BatchLogRecordProcessor(logExporter),
-  instrumentations: [getNodeAutoInstrumentations()],
-});
-
-// Start the SDK
-sdk.start();
-
-// Get logger from the global logger provider (set by SDK)
-const logger = logs.logs.getLogger("console-logger", "1.0.0");
-const originalConsoleLog = console.log;
-const originalConsoleError = console.error;
-const originalConsoleWarn = console.warn;
-const originalConsoleInfo = console.info;
-
-console.log = (...args: any[]) => {
-  originalConsoleLog(...args);
-  logger.emit({
-    severityText: "INFO",
-    body: args.map((arg) => String(arg)).join(" "),
-    attributes: { level: "info" },
-  });
-};
-
-console.error = (...args: any[]) => {
-  originalConsoleError(...args);
-  logger.emit({
-    severityText: "ERROR",
-    body: args.map((arg) => String(arg)).join(" "),
-    attributes: { level: "error" },
-  });
-};
-
-console.warn = (...args: any[]) => {
-  originalConsoleWarn(...args);
-  logger.emit({
-    severityText: "WARN",
-    body: args.map((arg) => String(arg)).join(" "),
-    attributes: { level: "warn" },
-  });
-};
-
-console.info = (...args: any[]) => {
-  originalConsoleInfo(...args);
-  logger.emit({
-    severityText: "INFO",
-    body: args.map((arg) => String(arg)).join(" "),
-    attributes: { level: "info" },
-  });
-};
-
-// Graceful shutdown
-process.on("SIGTERM", () => {
-  sdk
-    .shutdown()
-    .then(() => originalConsoleLog("Tracing and logging terminated"))
-    .catch((error) =>
-      originalConsoleLog("Error terminating tracing/logging", error)
-    )
-    .finally(() => process.exit(0));
-});
-
-// Example application code with manual tracing
-async function main() {
-  const tracer = api.trace.getTracer("example-tracer", "1.0.0");
-
-  // Create a root span
-  await tracer.startActiveSpan("main-operation", async (span) => {
-    console.log("Starting main operation...");
-
-    // Simulate some work
-    await tracer.startActiveSpan("fetch-data", async (childSpan) => {
-      console.log("Fetching data...");
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      childSpan.setAttribute("data.size", 1024);
-      childSpan.setAttribute("data.source", "database");
-      childSpan.end();
-    });
-
-    // Simulate more work
-    await tracer.startActiveSpan("process-data", async (childSpan) => {
-      console.log("Processing data...");
-      await new Promise((resolve) => setTimeout(resolve, 200));
-      childSpan.setAttribute("processed.records", 42);
-      childSpan.end();
-    });
-
-    // Simulate final work
-    await tracer.startActiveSpan("save-results", async (childSpan) => {
-      console.log("Saving results...");
-      await new Promise((resolve) => setTimeout(resolve, 150));
-      childSpan.setAttribute("saved.records", 42);
-      childSpan.setStatus({ code: api.SpanStatusCode.OK });
-      childSpan.end();
-    });
-
-    span.setStatus({ code: api.SpanStatusCode.OK });
-    console.log("Main operation completed!");
-    span.end();
-  });
-
-  // Flush and shutdown
-  await sdk.shutdown();
-  originalConsoleLog("Traces sent to Tempo and logs sent to Loki!");
+if (!alloyEndpoint || !alloyUser || !alloyPassword) {
+  console.error(
+    "Missing ALLOY_ENDPOINT / ALLOY_USER / ALLOY_PASSWORD — copy .env.example to .env and fill in.",
+  );
+  process.exit(1);
 }
 
-main().catch(console.error);
+const authToken = Buffer.from(`${alloyUser}:${alloyPassword}`).toString(
+  "base64",
+);
+const headers = { Authorization: `Basic ${authToken}` };
+
+const resource = new Resource({ "service.name": serviceName });
+
+const tracerProvider = new NodeTracerProvider({
+  resource,
+  spanProcessors: [
+    new SimpleSpanProcessor(
+      new OTLPTraceExporter({
+        url: `${alloyEndpoint}/v1/traces`,
+        headers,
+      }),
+    ),
+  ],
+});
+tracerProvider.register();
+
+const meterProvider = new MeterProvider({
+  resource,
+  readers: [
+    new PeriodicExportingMetricReader({
+      exporter: new OTLPMetricExporter({
+        url: `${alloyEndpoint}/v1/metrics`,
+        headers,
+      }),
+      exportIntervalMillis: 1_000,
+    }),
+  ],
+});
+metrics.setGlobalMeterProvider(meterProvider);
+
+const loggerProvider = new LoggerProvider({
+  resource,
+  processors: [
+    new SimpleLogRecordProcessor(
+      new OTLPLogExporter({
+        url: `${alloyEndpoint}/v1/logs`,
+        headers,
+      }),
+    ),
+  ],
+});
+logs.setGlobalLoggerProvider(loggerProvider);
+
+async function main() {
+  const tracer = trace.getTracer(serviceName);
+  const meter = metrics.getMeter(serviceName);
+  const logger = logs.getLogger(serviceName);
+
+  const span = tracer.startSpan("correct-timestamp-test", {
+    attributes: {
+      "http.method": "GET",
+      "http.url": "/api/now",
+    },
+  });
+  await new Promise((r) => setTimeout(r, 100));
+  span.end();
+
+  const gauge = meter.createGauge("test_temperature");
+  gauge.record(Number(metricValue), {
+    source: serviceName,
+  });
+
+  logger.emit({
+    severityText: "INFO",
+    body: logMessage,
+    attributes: {
+      "service.name": serviceName,
+      level: "info",
+      source: "main.ts",
+    },
+  });
+
+  await tracerProvider.forceFlush();
+  await meterProvider.forceFlush();
+  await loggerProvider.forceFlush();
+
+  await tracerProvider.shutdown();
+  await meterProvider.shutdown();
+  await loggerProvider.shutdown();
+
+  console.log(`Sent trace, metric, log to ${alloyEndpoint}`);
+  console.log(`  Tempo:  { .service.name = "${serviceName}" }`);
+  console.log(`  Mimir:  test_temperature{source="${serviceName}"}`);
+  console.log(`  Loki:   {service_name="${serviceName}"}`);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

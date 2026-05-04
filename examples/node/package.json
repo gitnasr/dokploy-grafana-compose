@@ -1,31 +1,25 @@
 {
-  "name": "node",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "dokploy-monitoring-node-example",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "tsx main.ts",
-    "start": "tsx main.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "devDependencies": {
-    "@types/node": "^24.10.1",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "start": "tsx main.ts"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/api-logs": "^0.208.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.67.2",
-    "@opentelemetry/exporter-logs-otlp-http": "^0.208.0",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.208.0",
-    "@opentelemetry/instrumentation": "^0.208.0",
-    "@opentelemetry/sdk-logs": "^0.208.0",
-    "@opentelemetry/sdk-node": "^0.208.0",
-    "dotenv": "^17.2.3"
+    "dotenv": "^16.4.7",
+    "@opentelemetry/api-logs": "^0.57.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.57.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.57.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.57.0",
+    "@opentelemetry/resources": "^1.30.0",
+    "@opentelemetry/sdk-logs": "^0.57.0",
+    "@opentelemetry/sdk-metrics": "^1.30.0",
+    "@opentelemetry/sdk-trace-base": "^1.30.0",
+    "@opentelemetry/sdk-trace-node": "^1.30.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
   }
 }
