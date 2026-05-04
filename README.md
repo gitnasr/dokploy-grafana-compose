@@ -2,6 +2,37 @@
 
 Grafana + Loki + Tempo + Mimir + Alloy as a single Dokploy Compose service.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    user([User])
+    apps[Apps / Clients]
+    node[node-exporter]
+
+    subgraph Ingest
+        alloy[Alloy]
+    end
+
+    subgraph Storage
+        loki[(Loki)]
+        tempo[(Tempo)]
+        mimir[(Mimir)]
+    end
+
+    grafana[Grafana]
+
+    apps --> alloy
+    node --> alloy
+    alloy --> loki
+    alloy --> tempo
+    alloy --> mimir
+    loki --> grafana
+    tempo --> grafana
+    mimir --> grafana
+    grafana --> user
+```
+
 ## Setup in Dokploy
 
 1. **Create Service → Compose**
