@@ -1,5 +1,7 @@
 # Dokploy Monitoring Stack
 
+![Is It Alive?](https://isitalive.dev/api/badge/github/quochuydev/dokploy-grafana-compose)
+
 Grafana + Loki + Tempo + Mimir + Alloy as a single Dokploy Compose service.
 
 ## Architecture
