@@ -1,5 +1,8 @@
 # Dokploy Monitoring Stack
 
+![Open Source](https://img.shields.io/badge/Open%20Source-Yes-brightgreen?style=flat-square)
+![GitHub Stars](https://img.shields.io/github/stars/quochuydev/dokploy-grafana-compose?style=flat-square)
+![Docker](https://img.shields.io/badge/Docker%20Compose-Ready-2496ED?style=flat-square&logo=docker)
 ![Is It Alive?](https://isitalive.dev/api/badge/github/quochuydev/dokploy-grafana-compose)
 
 Grafana + Loki + Tempo + Mimir + Alloy as a single Dokploy Compose service.
