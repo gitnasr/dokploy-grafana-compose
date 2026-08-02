@@ -86,7 +86,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "quantile_over_time(0.75, {app=\"igpd-fe-browser\"} | json | kind = `measurement` | value_lcp != `` | unwrap value_lcp [$__auto]) by (app)",
+          "expr": "quantile_over_time(0.75, {app=\"igpd-fe-browser\", kind=\"measurement\"} | logfmt | value_lcp != \"\" | unwrap value_lcp [$__auto]) by (app)",
           "queryType": "range",
           "refId": "A"
         }
@@ -143,7 +143,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "quantile_over_time(0.75, {app=\"igpd-fe-browser\"} | json | kind = `measurement` | value_inp != `` | unwrap value_inp [$__auto]) by (app)",
+          "expr": "quantile_over_time(0.75, {app=\"igpd-fe-browser\", kind=\"measurement\"} | logfmt | value_inp != \"\" | unwrap value_inp [$__auto]) by (app)",
           "queryType": "range",
           "refId": "A"
         }
@@ -200,7 +200,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "quantile_over_time(0.75, {app=\"igpd-fe-browser\"} | json | kind = `measurement` | value_cls != `` | unwrap value_cls [$__auto]) by (app)",
+          "expr": "quantile_over_time(0.75, {app=\"igpd-fe-browser\", kind=\"measurement\"} | logfmt | value_cls != \"\" | unwrap value_cls [$__auto]) by (app)",
           "queryType": "range",
           "refId": "A"
         }
@@ -258,7 +258,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({app=\"igpd-fe-browser\"} | json | kind = `exception` [$__auto]))",
+          "expr": "sum(count_over_time({app=\"igpd-fe-browser\", kind=\"exception\"} [$__auto]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -315,7 +315,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({app=\"igpd-fe-browser\"} | json | kind = `event` [$__auto]))",
+          "expr": "sum(count_over_time({app=\"igpd-fe-browser\", kind=\"event\"} [$__auto]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -373,7 +373,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "{app=\"igpd-fe-browser\"} | json | kind = `exception`",
+          "expr": "{app=\"igpd-fe-browser\", kind=\"exception\"}",
           "queryType": "range",
           "refId": "A"
         }
