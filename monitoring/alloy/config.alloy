@@ -68,7 +68,11 @@ faro.receiver "frontend" {
   server {
     listen_address           = "0.0.0.0"
     listen_port              = 12347
-    cors_allowed_origins     = ["https://ig.secretzone.top", "http://localhost:3000"]
+    // The FRONTEND origin, which is ig-fe.secretzone.top. ig.secretzone.top is
+    // the C# API — putting that here instead silently blocks every beacon at
+    // the CORS preflight, and the only symptom is a browser console error the
+    // backend never sees.
+    cors_allowed_origins     = ["https://ig-fe.secretzone.top", "http://localhost:3000"]
     max_allowed_payload_size = "10MiB"
   }
 
