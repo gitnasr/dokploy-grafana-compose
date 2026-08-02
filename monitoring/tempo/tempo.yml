@@ -24,6 +24,12 @@ storage:
     wal:
       path: /var/tempo/wal
 
+# Storage is a local filesystem volume, so retention is the only thing standing
+# between trace ingest and a full disk. 14 days.
+compactor:
+  compaction:
+    block_retention: 336h
+
 metrics_generator:
   registry:
     external_labels:
@@ -40,3 +46,7 @@ overrides:
       processors:
         - service-graphs
         - span-metrics
+        # local-blocks backs TraceQL metrics queries ({...} | rate()), which is
+        # what the traces dashboard uses for span-level rate/latency breakdowns
+        # that span-metrics alone cannot express.
+        - local-blocks

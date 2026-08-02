@@ -1,0 +1,16 @@
+apiVersion: 1
+
+providers:
+  - name: IGPD
+    orgId: 1
+    folder: IGPD
+    type: file
+    # Dashboards are source-controlled, so editing one in the UI and losing it on
+    # the next redeploy is the expected failure mode. Disabling deletion at least
+    # keeps a removed file from silently wiping the dashboard mid-incident.
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: false
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

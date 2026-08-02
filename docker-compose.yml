@@ -3,9 +3,14 @@ services:
     build:
       context: ./monitoring/grafana
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=password
+      - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER:-admin}
+      # Was hardcoded to "password" in the compose file. Supply the real value
+      # through the deployment environment, never here.
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASSWORD:?GF_ADMIN_PASSWORD must be set}
       - GF_AUTH_ANONYMOUS_ENABLED=false
+      # Must include the scheme. Grafana builds alert-notification deep links
+      # from this, and a scheme-less value yields links that do not resolve.
+      - GF_SERVER_ROOT_URL=${GF_SERVER_ROOT_URL:-https://grafana.gitnasr.com}
     volumes:
       - grafana-data:/var/lib/grafana
     depends_on:
@@ -131,12 +136,16 @@ services:
       - 3500 # Loki push ingest
       - 4317 # OTLP gRPC ingest
       - 4318 # OTLP HTTP ingest
+      - 12347 # Faro browser-RUM ingest
     deploy:
       resources:
         limits:
-          memory: 256M
+          # Raised from 256M: Alloy now carries three OTLP signals plus browser
+          # RUM. The memory_limiter in config.alloy is set to 384M, which needs
+          # headroom above it to shed load rather than get OOM-killed.
+          memory: 512M
         reservations:
-          memory: 128M
+          memory: 256M
 
   node-exporter:
     image: prom/node-exporter:v1.8.2

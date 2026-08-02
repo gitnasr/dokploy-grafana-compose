@@ -31,6 +31,13 @@ limits_config:
   retention_period: 30d
   ingestion_rate_mb: 10
   ingestion_burst_size_mb: 20
+  # Backs the log-volume histogram Grafana renders above Explore results and the
+  # "volume by level" panels on the logs dashboard. Off by default.
+  volume_enabled: true
+  # OTLP log records carry TraceId/SpanId plus the app's enrichment tags
+  # (JobId, Username, Step) as structured metadata rather than labels — that is
+  # what keeps them queryable without turning each one into a label dimension.
+  allow_structured_metadata: true
 
 compactor:
   working_directory: /loki/compactor
