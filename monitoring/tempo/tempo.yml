@@ -39,6 +39,12 @@ metrics_generator:
     remote_write:
       - url: http://mimir:9009/api/v1/push
         send_exemplars: true
+  # Required by the local-blocks processor, which backs TraceQL metrics.
+  # Without it processor initialisation fails outright — and because that
+  # failure aborts the whole chain, span-metrics and service-graphs stop being
+  # generated as well. The symptom is empty RED panels with no obvious cause.
+  traces_storage:
+    path: /var/tempo/generator/traces
 
 overrides:
   defaults:
