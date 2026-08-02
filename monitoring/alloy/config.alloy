@@ -65,6 +65,16 @@ otelcol.receiver.otlp "ingest" {
 // Unlike the OTLP and remote_write ports, this one is called directly by
 // end-user browsers, so it cannot sit behind basic auth — CORS is the gate.
 faro.receiver "frontend" {
+  // Without extra_log_labels the receiver emits entries carrying no Loki
+  // labels at all, so nothing forms a queryable stream — the data reaches
+  // Alloy and then effectively disappears. `kind` is filled from each
+  // payload (log / event / exception / measurement), which is what the
+  // frontend dashboard filters on.
+  extra_log_labels = {
+    app  = "igpd-fe-browser",
+    kind = "",
+  }
+
   server {
     listen_address           = "0.0.0.0"
     listen_port              = 12347
