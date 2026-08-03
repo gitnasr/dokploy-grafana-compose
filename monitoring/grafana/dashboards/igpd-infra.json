@@ -72,7 +72,7 @@
   },
   "panels": [
     {
-      "id": 90,
+      "id": 97,
       "type": "row",
       "title": "Host",
       "collapsed": false,
@@ -85,7 +85,7 @@
       "panels": []
     },
     {
-      "id": 91,
+      "id": 98,
       "type": "stat",
       "title": "CPU used",
       "datasource": {
@@ -152,7 +152,7 @@
       }
     },
     {
-      "id": 92,
+      "id": 99,
       "type": "stat",
       "title": "Memory used",
       "datasource": {
@@ -219,7 +219,7 @@
       }
     },
     {
-      "id": 93,
+      "id": 100,
       "type": "stat",
       "title": "Root disk free",
       "datasource": {
@@ -286,7 +286,7 @@
       }
     },
     {
-      "id": 94,
+      "id": 101,
       "type": "stat",
       "title": "Load (1m)",
       "datasource": {
@@ -345,7 +345,7 @@
       }
     },
     {
-      "id": 95,
+      "id": 102,
       "type": "timeseries",
       "title": "CPU by mode",
       "datasource": {
@@ -403,7 +403,7 @@
       }
     },
     {
-      "id": 96,
+      "id": 103,
       "type": "timeseries",
       "title": "Network throughput",
       "datasource": {
@@ -472,7 +472,7 @@
       }
     },
     {
-      "id": 97,
+      "id": 104,
       "type": "row",
       "title": ".NET runtime",
       "collapsed": false,
@@ -485,7 +485,7 @@
       "panels": []
     },
     {
-      "id": 98,
+      "id": 105,
       "type": "timeseries",
       "title": "Working set by service",
       "datasource": {
@@ -543,7 +543,7 @@
       }
     },
     {
-      "id": 99,
+      "id": 106,
       "type": "timeseries",
       "title": "GC pause ratio",
       "description": "Fraction of wall-clock time spent paused in GC. Sustained values above a few percent mean allocation pressure.",
@@ -602,7 +602,7 @@
       }
     },
     {
-      "id": 100,
+      "id": 107,
       "type": "timeseries",
       "title": "Thread pool queue length",
       "datasource": {
@@ -660,7 +660,7 @@
       }
     },
     {
-      "id": 101,
+      "id": 108,
       "type": "timeseries",
       "title": "Exceptions thrown",
       "datasource": {
@@ -718,7 +718,7 @@
       }
     },
     {
-      "id": 102,
+      "id": 109,
       "type": "row",
       "title": "Telemetry pipeline",
       "collapsed": false,
@@ -731,7 +731,7 @@
       "panels": []
     },
     {
-      "id": 103,
+      "id": 110,
       "type": "timeseries",
       "title": "Alloy ingest rate",
       "datasource": {
@@ -811,7 +811,7 @@
       }
     },
     {
-      "id": 104,
+      "id": 111,
       "type": "timeseries",
       "title": "Alloy drops and refusals",
       "description": "Anything non-zero here means telemetry is being lost. This is the panel that would have caught the silent OTLP 404s.",

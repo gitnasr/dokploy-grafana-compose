@@ -72,7 +72,7 @@
   },
   "panels": [
     {
-      "id": 81,
+      "id": 88,
       "type": "timeseries",
       "title": "LCP (p75)",
       "datasource": {
@@ -129,7 +129,7 @@
       }
     },
     {
-      "id": 82,
+      "id": 89,
       "type": "timeseries",
       "title": "INP (p75)",
       "datasource": {
@@ -186,7 +186,7 @@
       }
     },
     {
-      "id": 83,
+      "id": 90,
       "type": "timeseries",
       "title": "CLS (p75)",
       "datasource": {
@@ -243,7 +243,7 @@
       }
     },
     {
-      "id": 84,
+      "id": 91,
       "type": "timeseries",
       "title": "Browser errors",
       "description": "Uncaught JS errors and unhandled promise rejections reported by the Faro SDK.",
@@ -301,7 +301,7 @@
       }
     },
     {
-      "id": 85,
+      "id": 92,
       "type": "timeseries",
       "title": "Page views",
       "datasource": {
@@ -358,7 +358,7 @@
       }
     },
     {
-      "id": 86,
+      "id": 93,
       "type": "logs",
       "title": "Browser exceptions",
       "description": "Each entry carries the session id and page URL (query strings stripped client-side).",
@@ -396,7 +396,7 @@
       }
     },
     {
-      "id": 87,
+      "id": 94,
       "type": "row",
       "title": "Next.js server",
       "collapsed": false,
@@ -409,7 +409,7 @@
       "panels": []
     },
     {
-      "id": 88,
+      "id": 95,
       "type": "timeseries",
       "title": "Server request rate",
       "datasource": {
@@ -471,7 +471,7 @@
       }
     },
     {
-      "id": 89,
+      "id": 96,
       "type": "timeseries",
       "title": "Server p95 latency",
       "datasource": {

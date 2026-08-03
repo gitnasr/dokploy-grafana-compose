@@ -1020,7 +1020,7 @@
     {
       "id": 17,
       "type": "row",
-      "title": "Traffic and errors",
+      "title": "Service availability",
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -1032,9 +1032,9 @@
     },
     {
       "id": 18,
-      "type": "timeseries",
-      "title": "Queue depth by queue",
-      "description": "Per-queue enqueued count. A single saturated queue behind several idle ones is invisible in the total.",
+      "type": "state-timeline",
+      "title": "Service reporting",
+      "description": "Green where the service exported telemetry. Gaps are the outage signal — these services push, so silence is the symptom.",
       "datasource": {
         "type": "prometheus",
         "uid": "mimir"
@@ -1046,7 +1046,230 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "igpd_queue_depth",
+          "expr": "count by (job) (target_info{job=~\"igpd-.*\"})",
+          "legendFormat": "{{job}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "options": {
+        "showValue": "never",
+        "mergeValues": true,
+        "alignValue": "center",
+        "rowHeight": 0.85,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 80,
+            "lineWidth": 0
+          },
+          "mappings": [
+            {
+              "type": "range",
+              "options": {
+                "from": 1,
+                "to": 1000000000,
+                "result": {
+                  "text": "up",
+                  "color": "green",
+                  "index": 0
+                }
+              }
+            },
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "no data",
+                  "color": "red",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "noValue": "no data"
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 19,
+      "type": "row",
+      "title": "Traffic and errors",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "panels": []
+    },
+    {
+      "id": 20,
+      "type": "gauge",
+      "title": "Job success rate",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(igpd_job_succeeded_total[$rate])) / clamp_min(sum(rate(igpd_job_started_total[$rate])), 0.001)",
+          "legendFormat": "success",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 14
+      },
+      "options": {
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.5
+              },
+              {
+                "color": "yellow",
+                "value": 0.8
+              },
+              {
+                "color": "green",
+                "value": 0.95
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 21,
+      "type": "barchart",
+      "title": "Top error codes",
+      "description": "Ranked over the whole time range — the triage list, not a trend.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "topk(8, sum by (code) (increase(igpd_error_total[$__range])))",
+          "legendFormat": "{{code}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 14
+      },
+      "options": {
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "xTickLabelRotation": 0,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "fillOpacity": 80,
+            "lineWidth": 1
+          }
+        },
+        "overrides": []
+      },
+      "transformations": []
+    },
+    {
+      "id": 22,
+      "type": "bargauge",
+      "title": "Queue depth by queue",
+      "description": "Per-queue enqueued count. A single saturated queue behind several idle ones is invisible in a total.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "max by (queue) (igpd_queue_depth)",
           "legendFormat": "{{queue}}",
           "range": true,
           "refId": "A"
@@ -1055,48 +1278,53 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 8
+        "x": 12,
+        "y": 14
       },
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "showUnfilled": true,
+        "valueMode": "color",
+        "reduceOptions": {
           "calcs": [
-            "mean",
-            "max",
             "lastNotNull"
-          ]
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
+          ],
+          "fields": "",
+          "values": false
         }
       },
       "fieldConfig": {
         "defaults": {
           "unit": "short",
           "min": 0,
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 8,
-            "showPoints": "never",
-            "stacking": {
-              "mode": "none",
-              "group": "A"
-            },
-            "spanNulls": false
+          "max": 20000,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1000
+              },
+              {
+                "color": "red",
+                "value": 5000
+              }
+            ]
           }
         },
         "overrides": []
       }
     },
     {
-      "id": 19,
-      "type": "timeseries",
-      "title": "Errors by component",
+      "id": 23,
+      "type": "piechart",
+      "title": "Error share by component",
+      "description": "Share of all errors over the dashboard time range.",
       "datasource": {
         "type": "prometheus",
         "uid": "mimir"
@@ -1108,7 +1336,7 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "sum by (component) (rate(igpd_error_total[$rate]))",
+          "expr": "sum by (component) (increase(igpd_error_total[$__range]))",
           "legendFormat": "{{component}}",
           "range": true,
           "refId": "A"
@@ -1117,46 +1345,45 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
-        "y": 8
+        "x": 0,
+        "y": 22
       },
       "options": {
+        "pieType": "donut",
+        "displayLabels": [
+          "percent"
+        ],
         "legend": {
           "displayMode": "table",
           "placement": "right",
           "showLegend": true,
-          "calcs": [
-            "mean",
-            "max",
-            "lastNotNull"
+          "values": [
+            "value",
+            "percent"
           ]
         },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "desc"
         }
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps",
-          "min": 0,
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 30,
-            "showPoints": "never",
-            "stacking": {
-              "mode": "normal",
-              "group": "A"
-            },
-            "spanNulls": false
-          }
+          "unit": "short",
+          "custom": {}
         },
         "overrides": []
       }
     },
     {
-      "id": 20,
+      "id": 24,
       "type": "timeseries",
       "title": "API request rate by status",
       "datasource": {
@@ -1179,8 +1406,8 @@
       "gridPos": {
         "h": 7,
         "w": 12,
-        "x": 0,
-        "y": 16
+        "x": 12,
+        "y": 22
       },
       "options": {
         "legend": {
@@ -1214,7 +1441,7 @@
       }
     },
     {
-      "id": 21,
+      "id": 25,
       "type": "timeseries",
       "title": "Job outcomes / sec",
       "datasource": {
@@ -1259,8 +1486,8 @@
       "gridPos": {
         "h": 7,
         "w": 12,
-        "x": 12,
-        "y": 16
+        "x": 0,
+        "y": 30
       },
       "options": {
         "legend": {
@@ -1325,7 +1552,7 @@
       }
     },
     {
-      "id": 22,
+      "id": 26,
       "type": "row",
       "title": "Logs",
       "collapsed": false,
@@ -1333,12 +1560,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 37
       },
       "panels": []
     },
     {
-      "id": 23,
+      "id": 27,
       "type": "timeseries",
       "title": "Log volume by level",
       "datasource": {
@@ -1361,7 +1588,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 37
       },
       "options": {
         "legend": {

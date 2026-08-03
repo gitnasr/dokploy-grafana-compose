@@ -96,7 +96,7 @@
   },
   "panels": [
     {
-      "id": 66,
+      "id": 72,
       "type": "stat",
       "title": "Error lines",
       "datasource": {
@@ -110,7 +110,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({service_name=~\"$svc\", level=\"error\"} [$__range]))",
+          "expr": "sum(count_over_time({service_name=~\"$svc\"} | level =~ \"(?i)error\" [$__range]))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -161,7 +161,7 @@
       }
     },
     {
-      "id": 67,
+      "id": 73,
       "type": "stat",
       "title": "Warn lines",
       "datasource": {
@@ -175,7 +175,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({service_name=~\"$svc\", level=\"warn\"} [$__range]))",
+          "expr": "sum(count_over_time({service_name=~\"$svc\"} | level =~ \"(?i)warn\" [$__range]))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -218,7 +218,7 @@
       }
     },
     {
-      "id": 68,
+      "id": 74,
       "type": "stat",
       "title": "Total lines",
       "datasource": {
@@ -275,7 +275,7 @@
       }
     },
     {
-      "id": 69,
+      "id": 75,
       "type": "timeseries",
       "title": "Log rate by level",
       "datasource": {
@@ -363,7 +363,7 @@
       }
     },
     {
-      "id": 70,
+      "id": 76,
       "type": "timeseries",
       "title": "Error rate by service",
       "datasource": {
@@ -377,14 +377,14 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum by (service_name) (rate({service_name=~\"$svc\", level=\"error\"} [$__auto]))",
+          "expr": "sum by (service_name) (rate({service_name=~\"$svc\"} | level =~ \"(?i)error\" [$__auto]))",
           "queryType": "range",
           "refId": "A"
         }
       ],
       "gridPos": {
         "h": 6,
-        "w": 24,
+        "w": 16,
         "x": 0,
         "y": 4
       },
@@ -420,7 +420,67 @@
       }
     },
     {
-      "id": 71,
+      "id": 77,
+      "type": "piechart",
+      "title": "Log mix by level",
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "editorMode": "code",
+          "expr": "sum by (level) (count_over_time({service_name=~\"$svc\"} [$__range]))",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 4
+      },
+      "options": {
+        "pieType": "donut",
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {}
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 78,
       "type": "logs",
       "title": "Errors and warnings",
       "description": "Expand a line to see its structured metadata — JobId, Username, Step, and trace_id, which links straight through to the trace in Tempo.",
@@ -435,7 +495,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "{service_name=~\"$svc\"} | level =~ \"error|warn\" |= \"$search\"",
+          "expr": "{service_name=~\"$svc\"} | level =~ \"(?i)error|(?i)warn\" |~ \"$search\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -458,7 +518,7 @@
       }
     },
     {
-      "id": 72,
+      "id": 79,
       "type": "logs",
       "title": "All logs",
       "datasource": {
@@ -472,7 +532,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "{service_name=~\"$svc\"} | level =~ \"$level\" |= \"$search\"",
+          "expr": "{service_name=~\"$svc\"} | level =~ \"(?i)$level\" |~ \"$search\"",
           "queryType": "range",
           "refId": "A"
         }

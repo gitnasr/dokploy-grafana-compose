@@ -72,7 +72,7 @@
   },
   "panels": [
     {
-      "id": 73,
+      "id": 80,
       "type": "timeseries",
       "title": "Span rate by service",
       "description": "Derived by Tempo's metrics-generator from the spans themselves — no extra instrumentation.",
@@ -131,7 +131,7 @@
       }
     },
     {
-      "id": 74,
+      "id": 81,
       "type": "timeseries",
       "title": "Span error rate by service",
       "datasource": {
@@ -189,7 +189,7 @@
       }
     },
     {
-      "id": 75,
+      "id": 82,
       "type": "timeseries",
       "title": "Span p95 latency by operation",
       "datasource": {
@@ -251,7 +251,7 @@
       }
     },
     {
-      "id": 76,
+      "id": 83,
       "type": "nodeGraph",
       "title": "Service graph",
       "description": "Built from Tempo's service-graph processor: who calls whom, derived from span parent/child edges across services.",
@@ -278,7 +278,7 @@
       "options": {}
     },
     {
-      "id": 77,
+      "id": 84,
       "type": "table",
       "title": "Slowest jobs",
       "description": "Hangfire handler spans over ten seconds. Click a row to open the full trace, including its Mongo, Redis, Instagram and Drive children.",
@@ -316,7 +316,7 @@
       }
     },
     {
-      "id": 78,
+      "id": 85,
       "type": "table",
       "title": "Failed jobs",
       "datasource": {
@@ -353,7 +353,7 @@
       }
     },
     {
-      "id": 79,
+      "id": 86,
       "type": "table",
       "title": "Slow Instagram calls",
       "datasource": {
@@ -390,7 +390,7 @@
       }
     },
     {
-      "id": 80,
+      "id": 87,
       "type": "table",
       "title": "Instagram errors",
       "description": "Spans carrying a classified IGPD error code, so a trace is searchable by IG_RATE_LIMITED rather than a bare 429.",
