@@ -140,12 +140,13 @@ services:
     deploy:
       resources:
         limits:
-          # Raised from 256M: Alloy now carries three OTLP signals plus browser
-          # RUM. The memory_limiter in config.alloy is set to 384M, which needs
-          # headroom above it to shed load rather than get OOM-killed.
-          memory: 512M
+          # Alloy carries three OTLP signals plus browser RUM for a scraper that
+          # produces thousands of DB spans per job. At 512M the memory_limiter
+          # tripped continuously and shed millions of points; 2G gives it room
+          # to actually pass data through.
+          memory: 2G
         reservations:
-          memory: 256M
+          memory: 512M
 
   node-exporter:
     image: prom/node-exporter:v1.8.2

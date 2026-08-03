@@ -101,12 +101,18 @@ faro.receiver "frontend" {
 // =============================================================================
 
 // Hard ceiling ahead of batching. The container is memory-capped and an ingest
-// spike (a retry storm, a scrape burst) would otherwise OOM Alloy and take down
-// all three signals at once. Refusing data beats dying.
+// spike would otherwise OOM Alloy and take down all three signals at once.
+//
+// Sized generously relative to the container limit on purpose. This was
+// originally 384MiB against a 512MiB container, and under real scraper load it
+// shed ~9.9M spans, ~1.5M metric points and ~200k log records — the metric
+// series went visibly gappy for hours while the app itself was healthy. A
+// limiter that trips constantly is worse than none: it silently deletes the
+// data you deployed it to collect.
 otelcol.processor.memory_limiter "default" {
   check_interval = "1s"
-  limit          = "384MiB"
-  spike_limit    = "96MiB"
+  limit          = "1500MiB"
+  spike_limit    = "256MiB"
 
   output {
     traces  = [otelcol.processor.batch.default.input]
