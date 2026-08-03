@@ -411,6 +411,68 @@
     },
     {
       "id": 50,
+      "type": "piechart",
+      "title": "IG error codes",
+      "description": "Every IG failure mode now has its own code. IG_UNKNOWN appearing here means a response shape nobody has classified yet — worth a look at the raw body in Loki.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum by (code) (increase(igpd_error_total{code=~\"IG_.*\"}[$__range]))",
+          "legendFormat": "{{code}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 15
+      },
+      "options": {
+        "pieType": "donut",
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {}
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 51,
       "type": "timeseries",
       "title": "Rate-limit / block errors",
       "description": "The four codes that mean scraping has been shut off rather than merely erroring.",
@@ -427,64 +489,6 @@
           "editorMode": "code",
           "expr": "sum by (code) (rate(igpd_error_total{code=~\"IG_RATE_LIMITED|IG_IP_BLOCKED|IG_AUTH_FAILURE|IG_CHALLENGE_REQUIRED\"}[$rate]))",
           "legendFormat": "{{code}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 15
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true,
-          "calcs": []
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqps",
-          "min": 0,
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 8,
-            "showPoints": "never",
-            "stacking": {
-              "mode": "none",
-              "group": "A"
-            },
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 51,
-      "type": "timeseries",
-      "title": "Highlight rate-limit exhaustion",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mimir"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mimir"
-          },
-          "editorMode": "code",
-          "expr": "sum by (step) (rate(igpd_highlight_rate_limit_exhausted_total[$rate]))",
-          "legendFormat": "{{step}}",
           "range": true,
           "refId": "A"
         }
@@ -528,6 +532,64 @@
     },
     {
       "id": 52,
+      "type": "timeseries",
+      "title": "Highlight rate-limit exhaustion",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum by (step) (rate(igpd_highlight_rate_limit_exhausted_total[$rate]))",
+          "legendFormat": "{{step}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 22
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "min": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 53,
       "type": "row",
       "title": "Bootstrap",
       "collapsed": false,
@@ -535,12 +597,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 29
       },
       "panels": []
     },
     {
-      "id": 53,
+      "id": 54,
       "type": "timeseries",
       "title": "Bootstrap cache hit ratio",
       "datasource": {
@@ -564,7 +626,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 22
+        "y": 29
       },
       "options": {
         "legend": {
@@ -599,7 +661,7 @@
       }
     },
     {
-      "id": 54,
+      "id": 55,
       "type": "timeseries",
       "title": "Bootstrap extraction failures",
       "description": "Extraction failures are the early warning that Instagram changed their HTML — they climb before anything else breaks.",
@@ -635,7 +697,7 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 22
+        "y": 29
       },
       "options": {
         "legend": {
@@ -669,7 +731,7 @@
       }
     },
     {
-      "id": 55,
+      "id": 56,
       "type": "timeseries",
       "title": "Bootstrap latency",
       "datasource": {
@@ -704,7 +766,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 22
+        "y": 29
       },
       "options": {
         "legend": {
@@ -738,7 +800,7 @@
       }
     },
     {
-      "id": 56,
+      "id": 57,
       "type": "row",
       "title": "Profiles and posts",
       "collapsed": false,
@@ -746,12 +808,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 36
       },
       "panels": []
     },
     {
-      "id": 57,
+      "id": 58,
       "type": "timeseries",
       "title": "Profile picture capture outcomes",
       "datasource": {
@@ -775,65 +837,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 29
-      },
-      "options": {
-        "legend": {
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true,
-          "calcs": []
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqps",
-          "min": 0,
-          "custom": {
-            "drawStyle": "line",
-            "lineWidth": 1,
-            "fillOpacity": 30,
-            "showPoints": "never",
-            "stacking": {
-              "mode": "normal",
-              "group": "A"
-            },
-            "spanNulls": false
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 58,
-      "type": "timeseries",
-      "title": "Posts scrape outcomes",
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mimir"
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mimir"
-          },
-          "editorMode": "code",
-          "expr": "sum by (outcome) (rate(igpd_posts_scrape_total[$rate]))",
-          "legendFormat": "{{outcome}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 29
+        "y": 36
       },
       "options": {
         "legend": {
@@ -869,8 +873,7 @@
     {
       "id": 59,
       "type": "timeseries",
-      "title": "Profile fetch path",
-      "description": "A rise in relay_fallback means the primary path is failing.",
+      "title": "Posts scrape outcomes",
       "datasource": {
         "type": "prometheus",
         "uid": "mimir"
@@ -882,8 +885,8 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "sum by (path) (rate(igpd_profile_fetch_path_total[$rate]))",
-          "legendFormat": "{{path}}",
+          "expr": "sum by (outcome) (rate(igpd_posts_scrape_total[$rate]))",
+          "legendFormat": "{{outcome}}",
           "range": true,
           "refId": "A"
         }
@@ -891,8 +894,89 @@
       "gridPos": {
         "h": 7,
         "w": 8,
+        "x": 8,
+        "y": 36
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true,
+          "calcs": []
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "min": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 30,
+            "showPoints": "never",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            },
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 60,
+      "type": "timeseries",
+      "title": "Primary fetch rejected vs relay fallback",
+      "description": "IG_GRAPHQL_ERROR is a handled condition, not an incident: IG refuses the primary profile query and the client recovers on the relay shape. Alarming only if rejections rise without matching recoveries.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(igpd_error_total{code=\"IG_GRAPHQL_ERROR\"}[$rate]))",
+          "legendFormat": "rejected (IG_GRAPHQL_ERROR)",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(igpd_profile_fetch_path_total{path=\"relay_fallback\"}[$rate]))",
+          "legendFormat": "recovered via relay",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(igpd_profile_fetch_path_total{path=\"primary\"}[$rate]))",
+          "legendFormat": "primary succeeded",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "gridPos": {
+        "h": 7,
+        "w": 8,
         "x": 16,
-        "y": 29
+        "y": 36
       },
       "options": {
         "legend": {

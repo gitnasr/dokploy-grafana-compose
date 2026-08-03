@@ -72,7 +72,7 @@
   },
   "panels": [
     {
-      "id": 60,
+      "id": 61,
       "type": "stat",
       "title": "Upload rate",
       "datasource": {
@@ -131,7 +131,7 @@
       }
     },
     {
-      "id": 61,
+      "id": 62,
       "type": "stat",
       "title": "API failure ratio",
       "datasource": {
@@ -198,7 +198,7 @@
       }
     },
     {
-      "id": 62,
+      "id": 63,
       "type": "stat",
       "title": "Folder-cache hit ratio",
       "datasource": {
@@ -257,7 +257,7 @@
       }
     },
     {
-      "id": 63,
+      "id": 64,
       "type": "stat",
       "title": "Rate-limit pauses",
       "datasource": {
@@ -323,7 +323,7 @@
       }
     },
     {
-      "id": 64,
+      "id": 65,
       "type": "stat",
       "title": "Upload p95",
       "datasource": {
@@ -382,7 +382,7 @@
       }
     },
     {
-      "id": 65,
+      "id": 66,
       "type": "stat",
       "title": "Duplicate folders",
       "datasource": {
@@ -440,7 +440,7 @@
       }
     },
     {
-      "id": 66,
+      "id": 67,
       "type": "timeseries",
       "title": "Uploads vs skips by target",
       "datasource": {
@@ -513,7 +513,7 @@
       }
     },
     {
-      "id": 67,
+      "id": 68,
       "type": "piechart",
       "title": "API call mix by operation",
       "description": "Which Drive operations dominate the quota over the time range.",
@@ -575,7 +575,7 @@
       }
     },
     {
-      "id": 68,
+      "id": 69,
       "type": "timeseries",
       "title": "API failures by operation and reason",
       "datasource": {
@@ -637,7 +637,7 @@
       }
     },
     {
-      "id": 69,
+      "id": 70,
       "type": "timeseries",
       "title": "Upload latency quantiles",
       "datasource": {
@@ -717,7 +717,7 @@
       }
     },
     {
-      "id": 70,
+      "id": 71,
       "type": "timeseries",
       "title": "API latency by operation (p95)",
       "datasource": {
@@ -779,7 +779,7 @@
       }
     },
     {
-      "id": 71,
+      "id": 72,
       "type": "timeseries",
       "title": "Retries, pauses and lock contention",
       "datasource": {

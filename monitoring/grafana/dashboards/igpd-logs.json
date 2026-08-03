@@ -96,7 +96,7 @@
   },
   "panels": [
     {
-      "id": 72,
+      "id": 73,
       "type": "stat",
       "title": "Error lines",
       "datasource": {
@@ -161,7 +161,7 @@
       }
     },
     {
-      "id": 73,
+      "id": 74,
       "type": "stat",
       "title": "Warn lines",
       "datasource": {
@@ -218,7 +218,7 @@
       }
     },
     {
-      "id": 74,
+      "id": 75,
       "type": "stat",
       "title": "Total lines",
       "datasource": {
@@ -275,7 +275,7 @@
       }
     },
     {
-      "id": 75,
+      "id": 76,
       "type": "timeseries",
       "title": "Log rate by level",
       "datasource": {
@@ -363,7 +363,7 @@
       }
     },
     {
-      "id": 76,
+      "id": 77,
       "type": "timeseries",
       "title": "Error rate by service",
       "datasource": {
@@ -420,7 +420,7 @@
       }
     },
     {
-      "id": 77,
+      "id": 78,
       "type": "piechart",
       "title": "Log mix by level",
       "datasource": {
@@ -480,7 +480,7 @@
       }
     },
     {
-      "id": 78,
+      "id": 79,
       "type": "logs",
       "title": "Errors and warnings",
       "description": "Expand a line to see its structured metadata — JobId, Username, Step, and trace_id, which links straight through to the trace in Tempo.",
@@ -518,7 +518,7 @@
       }
     },
     {
-      "id": 79,
+      "id": 80,
       "type": "logs",
       "title": "All logs",
       "datasource": {
