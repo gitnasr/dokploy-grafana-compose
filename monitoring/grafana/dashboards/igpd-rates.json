@@ -161,7 +161,7 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "sum by (queue) (rate(igpd_error_total[$rate]))",
+          "expr": "sum by (queue) (rate(igpd_error_total{queue!=\"\"}[$rate]))",
           "legendFormat": "{{queue}}",
           "range": true,
           "refId": "A"
@@ -223,7 +223,7 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "sum by (route) (rate(igpd_error_total{component=\"api\"}[$rate]))",
+          "expr": "sum by (route) (rate(igpd_error_total{route!=\"\",component=\"api\"}[$rate]))",
           "legendFormat": "{{route}}",
           "range": true,
           "refId": "A"
