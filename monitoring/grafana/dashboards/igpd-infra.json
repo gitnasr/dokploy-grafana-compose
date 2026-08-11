@@ -72,7 +72,7 @@
   },
   "panels": [
     {
-      "id": 98,
+      "id": 100,
       "type": "row",
       "title": "Host",
       "collapsed": false,
@@ -85,7 +85,7 @@
       "panels": []
     },
     {
-      "id": 99,
+      "id": 101,
       "type": "stat",
       "title": "CPU used",
       "datasource": {
@@ -101,6 +101,7 @@
           "editorMode": "code",
           "expr": "1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[$rate]))",
           "legendFormat": "cpu",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -152,7 +153,7 @@
       }
     },
     {
-      "id": 100,
+      "id": 102,
       "type": "stat",
       "title": "Memory used",
       "datasource": {
@@ -168,6 +169,7 @@
           "editorMode": "code",
           "expr": "1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)",
           "legendFormat": "mem",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -219,7 +221,7 @@
       }
     },
     {
-      "id": 101,
+      "id": 103,
       "type": "stat",
       "title": "Root disk free",
       "datasource": {
@@ -235,6 +237,7 @@
           "editorMode": "code",
           "expr": "min(node_filesystem_avail_bytes{mountpoint=\"/rootfs\",fstype!=\"tmpfs\"} / node_filesystem_size_bytes{mountpoint=\"/rootfs\",fstype!=\"tmpfs\"})",
           "legendFormat": "free",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -286,7 +289,7 @@
       }
     },
     {
-      "id": 102,
+      "id": 104,
       "type": "stat",
       "title": "Load (1m)",
       "datasource": {
@@ -302,6 +305,7 @@
           "editorMode": "code",
           "expr": "max(node_load1)",
           "legendFormat": "load1",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -345,7 +349,7 @@
       }
     },
     {
-      "id": 103,
+      "id": 105,
       "type": "timeseries",
       "title": "CPU by mode",
       "datasource": {
@@ -361,6 +365,7 @@
           "editorMode": "code",
           "expr": "sum by (mode) (rate(node_cpu_seconds_total{mode!=\"idle\"}[$rate]))",
           "legendFormat": "{{mode}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -403,7 +408,7 @@
       }
     },
     {
-      "id": 104,
+      "id": 106,
       "type": "timeseries",
       "title": "Network throughput",
       "datasource": {
@@ -419,6 +424,7 @@
           "editorMode": "code",
           "expr": "sum(rate(node_network_receive_bytes_total{device!~\"lo|veth.*|br.*|docker.*\"}[$rate]))",
           "legendFormat": "rx",
+          "instant": false,
           "range": true,
           "refId": "A"
         },
@@ -430,6 +436,7 @@
           "editorMode": "code",
           "expr": "sum(rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|br.*|docker.*\"}[$rate]))",
           "legendFormat": "tx",
+          "instant": false,
           "range": true,
           "refId": "B"
         }
@@ -472,7 +479,7 @@
       }
     },
     {
-      "id": 105,
+      "id": 107,
       "type": "row",
       "title": ".NET runtime",
       "collapsed": false,
@@ -485,7 +492,7 @@
       "panels": []
     },
     {
-      "id": 106,
+      "id": 108,
       "type": "timeseries",
       "title": "Working set by service",
       "datasource": {
@@ -501,6 +508,7 @@
           "editorMode": "code",
           "expr": "sum by (job) (dotnet_process_memory_working_set_bytes{job=~\"igpd-.*\"})",
           "legendFormat": "{{job}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -543,7 +551,7 @@
       }
     },
     {
-      "id": 107,
+      "id": 109,
       "type": "timeseries",
       "title": "GC pause ratio",
       "description": "Fraction of wall-clock time spent paused in GC. Sustained values above a few percent mean allocation pressure.",
@@ -560,6 +568,7 @@
           "editorMode": "code",
           "expr": "sum by (job) (rate(dotnet_gc_pause_time_seconds_total{job=~\"igpd-.*\"}[$rate]))",
           "legendFormat": "{{job}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -602,7 +611,7 @@
       }
     },
     {
-      "id": 108,
+      "id": 110,
       "type": "timeseries",
       "title": "Thread pool queue length",
       "datasource": {
@@ -618,6 +627,7 @@
           "editorMode": "code",
           "expr": "sum by (job) (dotnet_thread_pool_queue_length_total{job=~\"igpd-.*\"})",
           "legendFormat": "{{job}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -660,7 +670,7 @@
       }
     },
     {
-      "id": 109,
+      "id": 111,
       "type": "timeseries",
       "title": "Exceptions thrown",
       "datasource": {
@@ -676,6 +686,7 @@
           "editorMode": "code",
           "expr": "sum by (job) (rate(dotnet_exceptions_total{job=~\"igpd-.*\"}[$rate]))",
           "legendFormat": "{{job}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -718,7 +729,7 @@
       }
     },
     {
-      "id": 110,
+      "id": 112,
       "type": "row",
       "title": "Telemetry pipeline",
       "collapsed": false,
@@ -731,7 +742,7 @@
       "panels": []
     },
     {
-      "id": 111,
+      "id": 113,
       "type": "timeseries",
       "title": "Alloy ingest rate",
       "datasource": {
@@ -747,6 +758,7 @@
           "editorMode": "code",
           "expr": "sum(rate(otelcol_receiver_accepted_spans_total[$rate]))",
           "legendFormat": "spans",
+          "instant": false,
           "range": true,
           "refId": "A"
         },
@@ -758,6 +770,7 @@
           "editorMode": "code",
           "expr": "sum(rate(otelcol_receiver_accepted_metric_points_total[$rate]))",
           "legendFormat": "metric points",
+          "instant": false,
           "range": true,
           "refId": "B"
         },
@@ -769,6 +782,7 @@
           "editorMode": "code",
           "expr": "sum(rate(otelcol_receiver_accepted_log_records_total[$rate]))",
           "legendFormat": "log records",
+          "instant": false,
           "range": true,
           "refId": "C"
         }
@@ -811,7 +825,7 @@
       }
     },
     {
-      "id": 112,
+      "id": 114,
       "type": "timeseries",
       "title": "Alloy drops and refusals",
       "description": "Anything non-zero here means telemetry is being lost. This is the panel that would have caught the silent OTLP 404s.",
@@ -828,6 +842,7 @@
           "editorMode": "code",
           "expr": "sum(rate(otelcol_receiver_refused_spans_total[$rate]))",
           "legendFormat": "refused spans",
+          "instant": false,
           "range": true,
           "refId": "A"
         },
@@ -839,6 +854,7 @@
           "editorMode": "code",
           "expr": "sum(rate(otelcol_exporter_send_failed_spans_total[$rate]))",
           "legendFormat": "failed span exports",
+          "instant": false,
           "range": true,
           "refId": "B"
         },
@@ -850,6 +866,7 @@
           "editorMode": "code",
           "expr": "sum(rate(otelcol_exporter_send_failed_metric_points_total[$rate]))",
           "legendFormat": "failed metric exports",
+          "instant": false,
           "range": true,
           "refId": "C"
         },
@@ -861,6 +878,7 @@
           "editorMode": "code",
           "expr": "sum(rate(otelcol_exporter_send_failed_log_records_total[$rate]))",
           "legendFormat": "failed log exports",
+          "instant": false,
           "range": true,
           "refId": "D"
         }
