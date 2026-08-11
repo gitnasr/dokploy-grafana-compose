@@ -131,7 +131,7 @@ otelcol.processor.batch "default" {
   output {
     traces  = [otelcol.exporter.otlp.tempo.input]
     metrics = [otelcol.exporter.prometheus.to_mimir.input]
-    logs    = [otelcol.exporter.loki.to_loki.input]
+    logs    = [otelcol.exporter.otlphttp.to_loki.input]
   }
 }
 
@@ -174,9 +174,38 @@ otelcol.exporter.prometheus "to_mimir" {
   forward_to = [prometheus.remote_write.mimir.receiver]
 }
 
-// OTLP logs -> Loki. Emits the labels {exporter, job, level, service_name};
-// every other log attribute (JobId, Username, Step, trace_id, ...) is carried
-// as Loki structured metadata, which is queryable without exploding cardinality.
-otelcol.exporter.loki "to_loki" {
-  forward_to = [loki.write.default.receiver]
+// OTLP logs -> Loki's NATIVE OTLP endpoint.
+//
+// This used to be `otelcol.exporter.loki`, forwarding into loki.write. The
+// comment above it claimed attributes were carried as structured metadata. They
+// were not: that component serialises the WHOLE OTel record into the log line as
+// JSON, so a 70-character message arrived in Loki as an ~850-byte envelope —
+//
+//   {"body":"FinalizeAttempt JobId=…: finalized as COMPLETED.",
+//    "traceid":"…","spanid":"…","severity":"Information",
+//    "attributes":{"JobId":"…","Step":"finalize","Username":"…",
+//                  "TraceId":"…","SpanId":"…","{OriginalFormat}":"…"},
+//    "resources":{"service.name":"igpd-worker","service.version":"1.0.0", …},
+//    "instrumentation_scope":{"name":"…"}}
+//
+// ~90% of every line was the resources block (identical on every line, and
+// already available as labels) plus TraceId/SpanId duplicated at both levels.
+// Three consequences, all observed: the Grafana logs panel rendered a wall of
+// JSON instead of messages; free-text search matched resource attribute values,
+// so searching "worker" hit every line ever written; and JobId/Username/Step
+// were unfilterable without a `| json` stage because no structured metadata
+// existed at all.
+//
+// Loki's OTLP receiver does the mapping the old comment described: body becomes
+// the log line, resource attributes become labels, and remaining log attributes
+// become structured metadata. The receiving side was already configured for it —
+// monitoring/loki/loki.yml runs Loki 3.4.2 on schema v13/tsdb with
+// allow_structured_metadata: true.
+//
+// The endpoint is the /otlp BASE. otlphttp appends the /v1/logs signal path
+// itself; writing the full path here yields /otlp/v1/logs/v1/logs and a silent 404.
+otelcol.exporter.otlphttp "to_loki" {
+  client {
+    endpoint = "http://loki:3100/otlp"
+  }
 }

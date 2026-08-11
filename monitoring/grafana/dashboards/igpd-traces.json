@@ -72,7 +72,7 @@
   },
   "panels": [
     {
-      "id": 81,
+      "id": 83,
       "type": "timeseries",
       "title": "Span rate by service",
       "description": "Derived by Tempo's metrics-generator from the spans themselves — no extra instrumentation.",
@@ -89,6 +89,7 @@
           "editorMode": "code",
           "expr": "sum by (service) (rate(traces_spanmetrics_calls_total[$rate]))",
           "legendFormat": "{{service}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -131,7 +132,7 @@
       }
     },
     {
-      "id": 82,
+      "id": 84,
       "type": "timeseries",
       "title": "Span error rate by service",
       "datasource": {
@@ -147,6 +148,7 @@
           "editorMode": "code",
           "expr": "sum by (service) (rate(traces_spanmetrics_calls_total{status_code=\"STATUS_CODE_ERROR\"}[$rate])) / clamp_min(sum by (service) (rate(traces_spanmetrics_calls_total[$rate])), 0.001)",
           "legendFormat": "{{service}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -189,7 +191,7 @@
       }
     },
     {
-      "id": 83,
+      "id": 85,
       "type": "timeseries",
       "title": "Span p95 latency by operation",
       "datasource": {
@@ -205,6 +207,7 @@
           "editorMode": "code",
           "expr": "histogram_quantile(0.95, sum by (le, span_name) (rate(traces_spanmetrics_latency_bucket[$rate])))",
           "legendFormat": "{{span_name}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -251,7 +254,7 @@
       }
     },
     {
-      "id": 84,
+      "id": 86,
       "type": "nodeGraph",
       "title": "Service graph",
       "description": "Built from Tempo's service-graph processor: who calls whom, derived from span parent/child edges across services.",
@@ -278,7 +281,7 @@
       "options": {}
     },
     {
-      "id": 85,
+      "id": 87,
       "type": "table",
       "title": "Slowest jobs",
       "description": "Hangfire handler spans over ten seconds. Click a row to open the full trace, including its Mongo, Redis, Instagram and Drive children.",
@@ -316,7 +319,7 @@
       }
     },
     {
-      "id": 86,
+      "id": 88,
       "type": "table",
       "title": "Failed jobs",
       "datasource": {
@@ -353,7 +356,7 @@
       }
     },
     {
-      "id": 87,
+      "id": 89,
       "type": "table",
       "title": "Slow Instagram calls",
       "datasource": {
@@ -390,7 +393,7 @@
       }
     },
     {
-      "id": 88,
+      "id": 90,
       "type": "table",
       "title": "Instagram errors",
       "description": "Spans carrying a classified IGPD error code, so a trace is searchable by IG_RATE_LIMITED rather than a bare 429.",

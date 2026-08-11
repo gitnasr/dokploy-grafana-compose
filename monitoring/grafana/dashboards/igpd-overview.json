@@ -102,6 +102,7 @@
           "editorMode": "code",
           "expr": "count(target_info{job=\"igpd-api\"})",
           "legendFormat": "api",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -188,6 +189,7 @@
           "editorMode": "code",
           "expr": "count(target_info{job=\"igpd-worker\"})",
           "legendFormat": "worker",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -274,6 +276,7 @@
           "editorMode": "code",
           "expr": "sum(rate(http_server_request_duration_seconds_count{job=\"igpd-api\",http_response_status_code=~\"5..\"}[$rate])) / clamp_min(sum(rate(http_server_request_duration_seconds_count{job=\"igpd-api\"}[$rate])), 0.001)",
           "legendFormat": "5xx",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -341,6 +344,7 @@
           "editorMode": "code",
           "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{job=\"igpd-api\"}[$rate])))",
           "legendFormat": "p95",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -408,6 +412,7 @@
           "editorMode": "code",
           "expr": "sum(igpd_queue_depth)",
           "legendFormat": "depth",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -474,6 +479,7 @@
           "editorMode": "code",
           "expr": "sum(rate(igpd_job_started_total[$rate])) * 60",
           "legendFormat": "jobs/min",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -533,6 +539,7 @@
           "editorMode": "code",
           "expr": "sum(rate(igpd_job_succeeded_total[$rate])) / clamp_min(sum(rate(igpd_job_started_total[$rate])), 0.001)",
           "legendFormat": "success",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -600,6 +607,7 @@
           "editorMode": "code",
           "expr": "sum(rate(igpd_error_total[$rate])) * 60",
           "legendFormat": "errors/min",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -680,6 +688,7 @@
           "editorMode": "code",
           "expr": "max(igpd_accounts)",
           "legendFormat": "accounts",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -738,6 +747,7 @@
           "editorMode": "code",
           "expr": "max(igpd_profiles_total)",
           "legendFormat": "profiles",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -796,6 +806,7 @@
           "editorMode": "code",
           "expr": "max(igpd_media_total)",
           "legendFormat": "media",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -854,6 +865,7 @@
           "editorMode": "code",
           "expr": "max(igpd_storage_roots_inaccessible)",
           "legendFormat": "roots",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -916,6 +928,7 @@
           "editorMode": "code",
           "expr": "sum(rate(igpd_account_scraped_total[$rate])) * 3600",
           "legendFormat": "scraped",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -975,6 +988,7 @@
           "editorMode": "code",
           "expr": "sum(rate(igpd_gdrive_uploaded_total[$rate])) * 3600",
           "legendFormat": "uploaded",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -1019,6 +1033,135 @@
     },
     {
       "id": 17,
+      "type": "stat",
+      "title": "Only-new pages saved (24h)",
+      "description": "Instagram posts pages skipped by only-new. Drill in on the Jobs dashboard.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum(increase(igpd_onlynew_pages_saved_total[24h]))",
+          "legendFormat": "saved",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 8
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 18,
+      "type": "stat",
+      "title": "Only-new fallback rate",
+      "description": "Share of only-new phases that re-scanned in full. Reasons on the Jobs dashboard.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(igpd_onlynew_fallback_total[$rate])) / clamp_min(sum(rate(igpd_onlynew_decision_total[$rate])), 0.0001)",
+          "legendFormat": "fallback",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 8
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.2
+              },
+              {
+                "color": "red",
+                "value": 0.5
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 19,
       "type": "row",
       "title": "Service availability",
       "collapsed": false,
@@ -1026,12 +1169,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 12
       },
       "panels": []
     },
     {
-      "id": 18,
+      "id": 20,
       "type": "state-timeline",
       "title": "Service reporting",
       "description": "Green where the service exported telemetry. Gaps are the outage signal — these services push, so silence is the symptom.",
@@ -1048,6 +1191,7 @@
           "editorMode": "code",
           "expr": "count by (job) (target_info{job=~\"igpd-.*\"})",
           "legendFormat": "{{job}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -1056,7 +1200,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 12
       },
       "options": {
         "showValue": "never",
@@ -1118,7 +1262,7 @@
       }
     },
     {
-      "id": 19,
+      "id": 21,
       "type": "row",
       "title": "Traffic and errors",
       "collapsed": false,
@@ -1126,12 +1270,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 18
       },
       "panels": []
     },
     {
-      "id": 20,
+      "id": 22,
       "type": "gauge",
       "title": "Job success rate",
       "datasource": {
@@ -1147,6 +1291,7 @@
           "editorMode": "code",
           "expr": "sum(rate(igpd_job_succeeded_total[$rate])) / clamp_min(sum(rate(igpd_job_started_total[$rate])), 0.001)",
           "legendFormat": "success",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -1155,7 +1300,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 14
+        "y": 18
       },
       "options": {
         "showThresholdLabels": false,
@@ -1200,7 +1345,7 @@
       }
     },
     {
-      "id": 21,
+      "id": 23,
       "type": "barchart",
       "title": "Top error codes",
       "description": "Ranked over the whole time range — the triage list, not a trend.",
@@ -1217,7 +1362,8 @@
           "editorMode": "code",
           "expr": "topk(8, sum by (code) (increase(igpd_error_total[$__range])))",
           "legendFormat": "{{code}}",
-          "range": true,
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -1225,7 +1371,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 14
+        "y": 18
       },
       "options": {
         "orientation": "horizontal",
@@ -1254,7 +1400,7 @@
       "transformations": []
     },
     {
-      "id": 22,
+      "id": 24,
       "type": "bargauge",
       "title": "Queue depth by queue",
       "description": "Per-queue enqueued count. A single saturated queue behind several idle ones is invisible in a total.",
@@ -1271,7 +1417,8 @@
           "editorMode": "code",
           "expr": "max by (queue) (igpd_queue_depth)",
           "legendFormat": "{{queue}}",
-          "range": true,
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -1279,7 +1426,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 18
       },
       "options": {
         "displayMode": "gradient",
@@ -1321,7 +1468,7 @@
       }
     },
     {
-      "id": 23,
+      "id": 25,
       "type": "piechart",
       "title": "Error share by component",
       "description": "Share of all errors over the dashboard time range.",
@@ -1338,7 +1485,8 @@
           "editorMode": "code",
           "expr": "sum by (component) (increase(igpd_error_total[$__range]))",
           "legendFormat": "{{component}}",
-          "range": true,
+          "instant": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -1346,7 +1494,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 26
       },
       "options": {
         "pieType": "donut",
@@ -1383,7 +1531,7 @@
       }
     },
     {
-      "id": 24,
+      "id": 26,
       "type": "timeseries",
       "title": "API request rate by status",
       "datasource": {
@@ -1399,6 +1547,7 @@
           "editorMode": "code",
           "expr": "sum by (http_response_status_code) (rate(http_server_request_duration_seconds_count{job=\"igpd-api\"}[$rate]))",
           "legendFormat": "{{http_response_status_code}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -1407,7 +1556,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 26
       },
       "options": {
         "legend": {
@@ -1441,7 +1590,7 @@
       }
     },
     {
-      "id": 25,
+      "id": 27,
       "type": "timeseries",
       "title": "Job outcomes / sec",
       "datasource": {
@@ -1457,6 +1606,7 @@
           "editorMode": "code",
           "expr": "sum(rate(igpd_job_succeeded_total[$rate]))",
           "legendFormat": "succeeded",
+          "instant": false,
           "range": true,
           "refId": "A"
         },
@@ -1468,6 +1618,7 @@
           "editorMode": "code",
           "expr": "sum(rate(igpd_job_failed_total[$rate]))",
           "legendFormat": "failed",
+          "instant": false,
           "range": true,
           "refId": "B"
         },
@@ -1479,6 +1630,7 @@
           "editorMode": "code",
           "expr": "sum(rate(igpd_job_retry_total[$rate]))",
           "legendFormat": "retried",
+          "instant": false,
           "range": true,
           "refId": "C"
         }
@@ -1487,7 +1639,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 30
+        "y": 34
       },
       "options": {
         "legend": {
@@ -1552,7 +1704,7 @@
       }
     },
     {
-      "id": 26,
+      "id": 28,
       "type": "row",
       "title": "Logs",
       "collapsed": false,
@@ -1560,12 +1712,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 41
       },
       "panels": []
     },
     {
-      "id": 27,
+      "id": 29,
       "type": "timeseries",
       "title": "Log volume by level",
       "datasource": {
@@ -1588,7 +1740,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 41
       },
       "options": {
         "legend": {

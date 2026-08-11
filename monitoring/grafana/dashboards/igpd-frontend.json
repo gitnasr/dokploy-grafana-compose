@@ -72,7 +72,7 @@
   },
   "panels": [
     {
-      "id": 89,
+      "id": 91,
       "type": "timeseries",
       "title": "LCP (p75)",
       "datasource": {
@@ -129,7 +129,7 @@
       }
     },
     {
-      "id": 90,
+      "id": 92,
       "type": "timeseries",
       "title": "INP (p75)",
       "datasource": {
@@ -186,7 +186,7 @@
       }
     },
     {
-      "id": 91,
+      "id": 93,
       "type": "timeseries",
       "title": "CLS (p75)",
       "datasource": {
@@ -243,7 +243,7 @@
       }
     },
     {
-      "id": 92,
+      "id": 94,
       "type": "timeseries",
       "title": "Browser errors",
       "description": "Uncaught JS errors and unhandled promise rejections reported by the Faro SDK.",
@@ -301,7 +301,7 @@
       }
     },
     {
-      "id": 93,
+      "id": 95,
       "type": "timeseries",
       "title": "Page views",
       "datasource": {
@@ -358,7 +358,7 @@
       }
     },
     {
-      "id": 94,
+      "id": 96,
       "type": "logs",
       "title": "Browser exceptions",
       "description": "Each entry carries the session id and page URL (query strings stripped client-side).",
@@ -396,7 +396,7 @@
       }
     },
     {
-      "id": 95,
+      "id": 97,
       "type": "row",
       "title": "Next.js server",
       "collapsed": false,
@@ -409,7 +409,7 @@
       "panels": []
     },
     {
-      "id": 96,
+      "id": 98,
       "type": "timeseries",
       "title": "Server request rate",
       "datasource": {
@@ -425,6 +425,7 @@
           "editorMode": "code",
           "expr": "sum by (span_name) (rate(traces_spanmetrics_calls_total{service=\"igpd-fe\"}[$rate]))",
           "legendFormat": "{{span_name}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
@@ -471,7 +472,7 @@
       }
     },
     {
-      "id": 97,
+      "id": 99,
       "type": "timeseries",
       "title": "Server p95 latency",
       "datasource": {
@@ -487,6 +488,7 @@
           "editorMode": "code",
           "expr": "histogram_quantile(0.95, sum by (le, span_name) (rate(traces_spanmetrics_latency_bucket{service=\"igpd-fe\"}[$rate])))",
           "legendFormat": "{{span_name}}",
+          "instant": false,
           "range": true,
           "refId": "A"
         }
