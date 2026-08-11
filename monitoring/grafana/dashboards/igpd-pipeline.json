@@ -12,7 +12,7 @@
   "version": 1,
   "refresh": "30s",
   "time": {
-    "from": "now-6h",
+    "from": "now-24h",
     "to": "now"
   },
   "editable": true,
@@ -36,21 +36,16 @@
         "name": "rate",
         "label": "Rate window",
         "type": "custom",
-        "query": "1m,5m,15m,30m,1h",
+        "query": "5m,15m,1h,6h,24h",
         "current": {
-          "text": "5m",
-          "value": "5m"
+          "text": "1h",
+          "value": "1h"
         },
         "options": [
           {
-            "text": "1m",
-            "value": "1m",
-            "selected": false
-          },
-          {
             "text": "5m",
             "value": "5m",
-            "selected": true
+            "selected": false
           },
           {
             "text": "15m",
@@ -58,13 +53,18 @@
             "selected": false
           },
           {
-            "text": "30m",
-            "value": "30m",
+            "text": "1h",
+            "value": "1h",
+            "selected": true
+          },
+          {
+            "text": "6h",
+            "value": "6h",
             "selected": false
           },
           {
-            "text": "1h",
-            "value": "1h",
+            "text": "24h",
+            "value": "24h",
             "selected": false
           }
         ]
@@ -168,7 +168,7 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "sum(rate(igpd_op_total{outcome=\"ok\"}[$rate])) / clamp_min(sum(rate(igpd_op_total[$rate])), 0.0001)",
+          "expr": "sum(rate(igpd_op_total{outcome!=\"error\"}[$rate])) / clamp_min(sum(rate(igpd_op_total[$rate])), 0.0001)",
           "legendFormat": "success",
           "instant": false,
           "range": true,
@@ -405,7 +405,7 @@
       "id": 137,
       "type": "table",
       "title": "Worst operations by error rate",
-      "description": "Ranked over the whole window. This is the panel to open first: it names the component, the operation and the classified reason together, so triage does not start with a metric name lookup.",
+      "description": "Ranked over the whole window. This is the panel to open first: it names the component, the operation and the classified reason together, so triage does not start with a metric name lookup. Empty is the good state — it means nothing recorded outcome=error.",
       "datasource": {
         "type": "prometheus",
         "uid": "mimir"
@@ -453,7 +453,8 @@
       "fieldConfig": {
         "defaults": {
           "unit": "reqps",
-          "custom": {}
+          "custom": {},
+          "noValue": "No failed operations in this window"
         },
         "overrides": []
       }
@@ -487,7 +488,7 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "sum by (operation) (rate(igpd_op_total{component=\"$component\",outcome=\"ok\"}[$rate])) / clamp_min(sum by (operation) (rate(igpd_op_total{component=\"$component\"}[$rate])), 0.0001)",
+          "expr": "sum by (operation) (rate(igpd_op_total{component=~\"$component\",outcome!=\"error\"}[$rate])) / clamp_min(sum by (operation) (rate(igpd_op_total{component=~\"$component\"}[$rate])), 0.0001)",
           "legendFormat": "{{operation}}",
           "instant": false,
           "range": true,
@@ -548,7 +549,7 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "topk(10, sum by (operation, reason) (rate(igpd_op_total{component=\"$component\",outcome=\"error\"}[$rate])))",
+          "expr": "topk(10, sum by (operation, reason) (rate(igpd_op_total{component=~\"$component\",outcome=\"error\"}[$rate])))",
           "legendFormat": "{{operation}} · {{reason}}",
           "instant": false,
           "range": true,
@@ -607,7 +608,7 @@
             "uid": "mimir"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, operation) (rate(igpd_op_duration_ms_bucket{component=\"$component\"}[$rate])))",
+          "expr": "histogram_quantile(0.95, sum by (le, operation) (rate(igpd_op_duration_ms_bucket{component=~\"$component\"}[$rate])))",
           "legendFormat": "{{operation}}",
           "instant": false,
           "range": true,
