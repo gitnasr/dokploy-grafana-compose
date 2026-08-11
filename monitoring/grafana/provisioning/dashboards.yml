@@ -12,5 +12,8 @@ providers:
     updateIntervalSeconds: 30
     allowUiUpdates: false
     options:
-      path: /var/lib/grafana/dashboards
+      # Must stay outside /var/lib/grafana — the grafana-data volume mounts over
+      # that path and shadowed the baked-in dashboards, so this provider spent
+      # months reading an empty directory. See the note in the Dockerfile.
+      path: /etc/grafana/dashboards
       foldersFromFilesStructure: false
