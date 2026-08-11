@@ -110,7 +110,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({service_name=~\"$svc\"} | level =~ \"(?i)error\" [$__range]))",
+          "expr": "sum(count_over_time({service_name=~\"$svc\"} | detected_level =~ \"(?i)error\" [$__range]))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -175,7 +175,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum(count_over_time({service_name=~\"$svc\"} | level =~ \"(?i)warn\" [$__range]))",
+          "expr": "sum(count_over_time({service_name=~\"$svc\"} | detected_level =~ \"(?i)warn\" [$__range]))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -289,7 +289,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum by (level) (rate({service_name=~\"$svc\"} [$__auto]))",
+          "expr": "sum by (detected_level) (rate({service_name=~\"$svc\"} [$__auto]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -377,7 +377,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum by (service_name) (rate({service_name=~\"$svc\"} | level =~ \"(?i)error\" [$__auto]))",
+          "expr": "sum by (service_name) (rate({service_name=~\"$svc\"} | detected_level =~ \"(?i)error\" [$__auto]))",
           "queryType": "range",
           "refId": "A"
         }
@@ -434,7 +434,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "sum by (level) (count_over_time({service_name=~\"$svc\"} [$__range]))",
+          "expr": "sum by (detected_level) (count_over_time({service_name=~\"$svc\"} [$__range]))",
           "queryType": "instant",
           "refId": "A"
         }
@@ -495,7 +495,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "{service_name=~\"$svc\"} | level =~ \"(?i)error|(?i)warn\" |~ \"$search\"",
+          "expr": "{service_name=~\"$svc\"} | detected_level =~ \"(?i)error|(?i)warn\" |~ \"$search\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -532,7 +532,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "{service_name=~\"$svc\"} | level =~ \"(?i)$level\" |~ \"$search\"",
+          "expr": "{service_name=~\"$svc\"} | detected_level =~ \"(?i)$level\" |~ \"$search\"",
           "queryType": "range",
           "refId": "A"
         }
