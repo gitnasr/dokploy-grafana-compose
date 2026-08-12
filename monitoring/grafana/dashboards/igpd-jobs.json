@@ -1,7 +1,7 @@
 {
   "uid": "igpd-jobs",
   "title": "IGPD — Jobs & only-new",
-  "description": "Whether only-new is saving Instagram requests, how often it gives up and why, and the lifecycle trail behind any individual job.",
+  "description": "Whether only-new is saving Instagram requests, how often it gives up and why, when each queue's backlog is forecast to clear, and the lifecycle trail behind any individual job.",
   "tags": [
     "igpd",
     "jobs",
@@ -68,12 +68,49 @@
             "selected": false
           }
         ]
+      },
+      {
+        "name": "drain",
+        "label": "Forecast window",
+        "type": "custom",
+        "query": "15m,30m,1h,6h,24h",
+        "current": {
+          "text": "1h",
+          "value": "1h"
+        },
+        "options": [
+          {
+            "text": "15m",
+            "value": "15m",
+            "selected": false
+          },
+          {
+            "text": "30m",
+            "value": "30m",
+            "selected": false
+          },
+          {
+            "text": "1h",
+            "value": "1h",
+            "selected": true
+          },
+          {
+            "text": "6h",
+            "value": "6h",
+            "selected": false
+          },
+          {
+            "text": "24h",
+            "value": "24h",
+            "selected": false
+          }
+        ]
       }
     ]
   },
   "panels": [
     {
-      "id": 115,
+      "id": 119,
       "type": "row",
       "title": "Only-new health",
       "collapsed": false,
@@ -86,7 +123,7 @@
       "panels": []
     },
     {
-      "id": 116,
+      "id": 120,
       "type": "stat",
       "title": "Pages saved (24h)",
       "description": "Posts-timeline pages NOT fetched because only-new stopped early. This is the entire payoff of the mode — if it trends to zero, only-new is costing complexity and buying nothing.",
@@ -147,7 +184,7 @@
       }
     },
     {
-      "id": 117,
+      "id": 121,
       "type": "stat",
       "title": "Incremental share",
       "description": "Share of only-new phases that actually ran incrementally (or verified in one page). First runs and fallbacks are the remainder.",
@@ -215,7 +252,7 @@
       }
     },
     {
-      "id": 118,
+      "id": 122,
       "type": "stat",
       "title": "Fallback rate",
       "description": "Phases that abandoned the incremental plan and re-scanned in full. A sustained climb means Instagram's post counts are disagreeing with its own timelines — check the reason breakdown below before assuming a bug.",
@@ -283,7 +320,7 @@
       }
     },
     {
-      "id": 119,
+      "id": 123,
       "type": "stat",
       "title": "Median expected delta",
       "description": "Typical number of new posts a scrape expects to find. Large values mean profiles are being revisited rarely enough that incremental barely helps.",
@@ -344,7 +381,7 @@
       }
     },
     {
-      "id": 120,
+      "id": 124,
       "type": "stat",
       "title": "Highlight groups skipped",
       "description": "Highlight groups whose item count was unchanged, so their media upserts and validation batch were skipped. Note this does NOT save an Instagram request — the tray carries no per-group item count, so the group has to be fetched before it can be compared.",
@@ -405,7 +442,7 @@
       }
     },
     {
-      "id": 121,
+      "id": 125,
       "type": "piechart",
       "title": "Strategy mix",
       "description": "How only-new phases resolved. FIRST_RUN_FULL is expected for newly-discovered profiles and is not a failure.",
@@ -468,7 +505,7 @@
       }
     },
     {
-      "id": 122,
+      "id": 126,
       "type": "barchart",
       "title": "Fallback reasons",
       "description": "COUNT_MISMATCH dominating means archived posts are reappearing — normal on some accounts. PAGE_BUDGET_EXCEEDED dominating means the page-slack constant is too tight.",
@@ -523,7 +560,7 @@
       "transformations": []
     },
     {
-      "id": 123,
+      "id": 127,
       "type": "barchart",
       "title": "Highlight group decisions",
       "description": "UNCHANGED is the saving. SHRANK means a highlight lost items and was re-read whole.",
@@ -578,7 +615,7 @@
       "transformations": []
     },
     {
-      "id": 124,
+      "id": 128,
       "type": "timeseries",
       "title": "Only-new decisions per second",
       "description": "Decision throughput split by strategy, so a shift in the mix is visible over time.",
@@ -638,7 +675,7 @@
       }
     },
     {
-      "id": 125,
+      "id": 129,
       "type": "timeseries",
       "title": "Pages saved vs pages fetched",
       "description": "Saved should sit above fetched whenever profiles are being revisited. If fetched dominates, most runs are first-runs or fallbacks.",
@@ -722,9 +759,9 @@
       }
     },
     {
-      "id": 126,
+      "id": 130,
       "type": "row",
-      "title": "Job lifecycle",
+      "title": "Queue drain forecast",
       "collapsed": false,
       "gridPos": {
         "h": 1,
@@ -735,7 +772,719 @@
       "panels": []
     },
     {
-      "id": 127,
+      "id": 131,
+      "type": "stat",
+      "title": "Jobs waiting",
+      "description": "Total enqueued across every queue. The numerator of every forecast on this row.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum(igpd_queue_depth)",
+          "legendFormat": "depth",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 19
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1000
+              },
+              {
+                "color": "red",
+                "value": 5000
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 132,
+      "type": "stat",
+      "title": "Drain rate",
+      "description": "Jobs picked up per minute across all queues, averaged over $drain.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum(rate(igpd_job_started_total[$drain])) * 60",
+          "legendFormat": "jobs/min",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 19
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 133,
+      "type": "stat",
+      "title": "Time to drain (slowest queue)",
+      "description": "Longest per-queue depth/throughput across all queues — the backlog is done when its slowest queue is done. Ignores new arrivals, so this is the optimistic floor.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "max(max by (queue) (igpd_queue_depth) / clamp_min(sum by (queue) (rate(igpd_job_started_total[$drain])), 0.0001))",
+          "legendFormat": "eta",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 19
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "mappings": [
+            {
+              "type": "range",
+              "options": {
+                "from": 10000000,
+                "to": 1000000000000000,
+                "result": {
+                  "text": "not draining",
+                  "color": "red",
+                  "index": 0
+                }
+              }
+            },
+            {
+              "type": "range",
+              "options": {
+                "from": 0,
+                "to": 0,
+                "result": {
+                  "text": "empty",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 3600
+              },
+              {
+                "color": "orange",
+                "value": 86400
+              },
+              {
+                "color": "red",
+                "value": 604800
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 134,
+      "type": "stat",
+      "title": "Time to drain (net of arrivals)",
+      "description": "Same, but divided by how fast the depth gauge is actually shrinking, so work arriving during the drain is netted out. Reads 'not draining' when arrivals keep pace — which is the real answer, and the one the optimistic estimate hides.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "max(max by (queue) (igpd_queue_depth) / clamp_min(- deriv((max by (queue) (igpd_queue_depth))[$drain:1m]), 0.0001))",
+          "legendFormat": "eta",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 19
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 0,
+          "mappings": [
+            {
+              "type": "range",
+              "options": {
+                "from": 10000000,
+                "to": 1000000000000000,
+                "result": {
+                  "text": "not draining",
+                  "color": "red",
+                  "index": 0
+                }
+              }
+            },
+            {
+              "type": "range",
+              "options": {
+                "from": 0,
+                "to": 0,
+                "result": {
+                  "text": "empty",
+                  "color": "green",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 3600
+              },
+              {
+                "color": "orange",
+                "value": 86400
+              },
+              {
+                "color": "red",
+                "value": 604800
+              }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 135,
+      "type": "table",
+      "title": "Drain forecast by queue",
+      "description": "Per queue: what is waiting, how fast it is being taken, how fast the backlog is actually shrinking, and both forecasts. A queue whose net drain is negative is growing — its ETA column is meaningless and reads as 'not draining'.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "max by (queue) (igpd_queue_depth)",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "refId": "A",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum by (queue) (rate(igpd_job_started_total[$drain])) * 60",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "refId": "B",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "(- deriv((max by (queue) (igpd_queue_depth))[$drain:1m])) * 60",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "refId": "C",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "max by (queue) (igpd_queue_depth) / clamp_min(sum by (queue) (rate(igpd_job_started_total[$drain])), 0.0001)",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "refId": "D",
+          "format": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "max by (queue) (igpd_queue_depth) / clamp_min(- deriv((max by (queue) (igpd_queue_depth))[$drain:1m]), 0.0001)",
+          "legendFormat": "",
+          "instant": true,
+          "range": false,
+          "refId": "E",
+          "format": "table"
+        }
+      ],
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "ETA (net)",
+            "desc": true
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "queue",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Time 5": true
+            },
+            "renameByName": {
+              "queue": "Queue",
+              "Value #A": "Waiting",
+              "Value #B": "Drain /min",
+              "Value #C": "Net drain /min",
+              "Value #D": "ETA",
+              "Value #E": "ETA (net)"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {},
+          "noValue": "No queues reporting depth"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ETA"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "range",
+                    "options": {
+                      "from": 10000000,
+                      "to": 1000000000000000,
+                      "result": {
+                        "text": "not draining",
+                        "color": "red",
+                        "index": 0
+                      }
+                    }
+                  },
+                  {
+                    "type": "range",
+                    "options": {
+                      "from": 0,
+                      "to": 0,
+                      "result": {
+                        "text": "empty",
+                        "color": "green",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ETA (net)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "range",
+                    "options": {
+                      "from": 10000000,
+                      "to": 1000000000000000,
+                      "result": {
+                        "text": "not draining",
+                        "color": "red",
+                        "index": 0
+                      }
+                    }
+                  },
+                  {
+                    "type": "range",
+                    "options": {
+                      "from": 0,
+                      "to": 0,
+                      "result": {
+                        "text": "empty",
+                        "color": "green",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".*drain /min"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 136,
+      "type": "timeseries",
+      "title": "Projected time to drain by queue",
+      "description": "The forecast itself, over time. A flat line means the queue is being drained exactly as fast as it fills — throughput is fine and the backlog still never clears. A line sloping down at 45° is a backlog genuinely finishing.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "max by (queue) (igpd_queue_depth) / clamp_min(sum by (queue) (rate(igpd_job_started_total[$drain])), 0.0001)",
+          "legendFormat": "{{queue}}",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 137,
+      "type": "timeseries",
+      "title": "Arrivals vs drain by queue",
+      "description": "Jobs enqueued per minute against jobs started per minute. Arrivals are derived — drain plus the gauge's own slope — because nothing counts enqueues directly. Where arrivals sit above drain the queue is growing and no ETA is finite.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum by (queue) (rate(igpd_job_started_total[$drain])) * 60",
+          "legendFormat": "drain {{queue}}",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "(sum by (queue) (rate(igpd_job_started_total[$drain])) - (- deriv((max by (queue) (igpd_queue_depth))[$drain:1m]))) * 60",
+          "legendFormat": "arrivals {{queue}}",
+          "instant": false,
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 33
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": null,
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 138,
+      "type": "row",
+      "title": "Job lifecycle",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 41
+      },
+      "panels": []
+    },
+    {
+      "id": 139,
       "type": "barchart",
       "title": "Lifecycle events by type",
       "description": "Volume of each timeline entry kind. POSTS_PAGE and HIGHLIGHT_GROUP are capped per job, so they under-report by design.",
@@ -761,7 +1510,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 19
+        "y": 41
       },
       "options": {
         "orientation": "horizontal",
@@ -790,7 +1539,7 @@
       "transformations": []
     },
     {
-      "id": 128,
+      "id": 140,
       "type": "timeseries",
       "title": "Job outcomes",
       "description": "The three ways a job stops being in flight.",
@@ -840,7 +1589,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 19
+        "y": 41
       },
       "options": {
         "legend": {
@@ -874,7 +1623,7 @@
       }
     },
     {
-      "id": 129,
+      "id": 141,
       "type": "logs",
       "title": "Recent only-new fallbacks (with reasons)",
       "description": "Every fallback, in the operator's own words. Each line carries the job id, the phase, the reason, and the numbers behind it — this is the panel that answers \"why did this profile get scanned in full again?\".",
@@ -898,7 +1647,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 50
       },
       "options": {
         "showTime": true,
@@ -912,7 +1661,7 @@
       }
     },
     {
-      "id": 130,
+      "id": 142,
       "type": "row",
       "title": "Correctness",
       "collapsed": false,
@@ -920,12 +1669,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 38
+        "y": 60
       },
       "panels": []
     },
     {
-      "id": 131,
+      "id": 143,
       "type": "timeseries",
       "title": "Discovered vs downloaded",
       "description": "Under only-new the 'already held' line should collapse toward zero for posts: the scraper now filters known posts out before they reach validation, instead of enqueueing them and letting dedup absorb the cost.",
@@ -975,7 +1724,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 38
+        "y": 60
       },
       "options": {
         "legend": {
@@ -1009,7 +1758,7 @@
       }
     },
     {
-      "id": 132,
+      "id": 144,
       "type": "timeseries",
       "title": "Posts pages fetched",
       "description": "Raw Instagram page cost. This is the number only-new exists to push down; compare against the pages-saved panel above.",
@@ -1035,7 +1784,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 38
+        "y": 60
       },
       "options": {
         "legend": {
